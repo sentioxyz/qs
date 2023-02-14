@@ -2,10 +2,11 @@ package qs
 
 import (
 	"fmt"
-	"github.com/blevesearch/bleve"
-	"github.com/blevesearch/bleve/search/query"
 	"strconv"
 	"time"
+
+	"github.com/blevesearch/bleve"
+	"github.com/blevesearch/bleve/search/query"
 )
 
 // helper stuff for setting up range queries
@@ -112,6 +113,23 @@ func (rp *rangeParams) generate() (query.Query, error) {
 	if isDate {
 		return bleve.NewDateRangeInclusiveQuery(t1, t2, rp.minInclusive, rp.maxInclusive), nil
 	}
+	if *rp.max == "*" {
+		if rp.min != nil {
+			f, err := strconv.ParseFloat(*rp.min, 64)
+			if err == nil {
+				return bleve.NewNumericRangeInclusiveQuery(&f, nil, rp.minInclusive, rp.maxInclusive), nil
+			}
+		}
+	}
+	if *rp.min == "*" {
+		if rp.max != nil {
+			f, err := strconv.ParseFloat(*rp.max, 64)
+			if err == nil {
+				return bleve.NewNumericRangeInclusiveQuery(nil, &f, rp.minInclusive, rp.maxInclusive), nil
+			}
+		}
+	}
+
 	return nil, fmt.Errorf("not numeric")
 
 }

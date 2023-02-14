@@ -37,9 +37,10 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/bcampbell/qs"
 	"os"
 	"strings"
+
+	"github.com/sentioxyz/qs"
 )
 
 var defaultAND bool

@@ -789,3 +789,15 @@ func BenchmarkLexer(b *testing.B) {
 	}
 
 }
+
+func TestParseWithStart(t *testing.T) {
+	q, err := Parse("a: [1 TO *]")
+
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	q2, err := Parse("a: [* TO 10]")
+
+	println(q, q2)
+}

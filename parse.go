@@ -517,6 +517,14 @@ func (p *Parser) parseRange(ctx context) (query.Query, error) {
 		minVal = tok.val
 	case tQUOTED:
 		minVal = tok.val[1 : len(tok.val)-1]
+	case tMINUS:
+		// Handle negative numbers
+		nextTok := p.next()
+		if nextTok.typ == tLITERAL {
+			minVal = "-" + nextTok.val
+		} else {
+			return nil, ParseError{tok.pos, "expected number after -"}
+		}
 	case tTO:
 		p.backup()
 		// empty start
@@ -535,6 +543,14 @@ func (p *Parser) parseRange(ctx context) (query.Query, error) {
 		maxVal = tok.val
 	case tQUOTED:
 		maxVal = tok.val[1 : len(tok.val)-1]
+	case tMINUS:
+		// Handle negative numbers
+		nextTok := p.next()
+		if nextTok.typ == tLITERAL {
+			maxVal = "-" + nextTok.val
+		} else {
+			return nil, ParseError{tok.pos, "expected number after -"}
+		}
 	case tRSQUARE:
 		p.backup() // empty end value
 	case tRBRACE:
@@ -593,6 +609,14 @@ func (p *Parser) parseRelational(ctx context) (query.Query, error) {
 		val = tok.val
 	case tQUOTED:
 		val = tok.val[1 : len(tok.val)-1]
+	case tMINUS:
+		// Handle negative numbers
+		nextTok := p.next()
+		if nextTok.typ == tLITERAL {
+			val = "-" + nextTok.val
+		} else {
+			return nil, ParseError{tok.pos, "expected number after -"}
+		}
 	default:
 		return nil, ParseError{tok.pos, fmt.Sprintf("unexpected %s", tok.val)}
 	}
